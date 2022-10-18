@@ -46,7 +46,6 @@ class PepPy:
 
     @__check_peplink_response
     def __send_correct_request(self, endpoint, clean=True, **kwargs):
-        # proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
         url = self.__URL + endpoint
 
         self.__debug(f"Sending a request to: {url}")
@@ -55,7 +54,7 @@ class PepPy:
         if clean:
             self.__clean(kwargs)
 
-        response = requests.post(url, verify=False, cookies=self.cookies , **kwargs)
+        response = requests.post(url, verify=False, cookies=self.cookies, **kwargs)
         self.__check_for_new_cookies_in_reponse(response)
         return response
 
