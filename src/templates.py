@@ -233,14 +233,14 @@ class CellularSettings(BaseTemplate):
         """ Cellular Settings data holder for Peplink API
 
         Args:
-            instant_active (bool, optional): _description_. Defaults to True.
+            instant_active (bool, optional): Instant active cell card. Defaults to True.
             id (int, optional): The id of the wan connection. Cellular setting is always 2. Defaults to 2.
             name (str, optional): Name of Cellular setting. Defaults to 'Cellular'.
             enable (bool, optional): Enable Cell Settings. Defaults to True.
             enable_healthcheck (bool, optional): Enable healthcheck. Defaults to True.
             enable_ddns (bool, optional): Enable ddns. Defaults to False.
-            schedule (_type_, optional): _description_. Defaults to None.
-            cellular (dict, optional): _description_. Defaults to {'preferredSim': None, 'simCardScheme': '1'}.
+            schedule (dict, optional): Schedule for cell settings. Defaults to None.
+            cellular (dict, optional): Set preferred sim and sim card scheme. Defaults to {'preferredSim': None, 'simCardScheme': '1'}.
             sim1_info (dict, optional): Collection of Sim information. Defaults to None.
             sim2_info (dict, optional): Collection of Sim information. Defaults to None.
             signal_level (int, optional): Singal level for cellular signal. Defaults to 0.
