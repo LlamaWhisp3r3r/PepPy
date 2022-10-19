@@ -14,18 +14,18 @@ class BaseTemplate:
 
 class EmailSettings(BaseTemplate):
 
-    def __init__(self, host, security, port, username, password, sender, recipients, enable=True):
+    def __init__(self, host, security, port, sender, recipients, username=None, password=None, enable=True):
         """ Email Settings holder for peplink API
 
         Args:
-            host (str): _description_
-            security (_type_): _description_
-            port (int): _description_
-            username (str): _description_
-            password (str): _description_
-            sender (str): _description_
-            recipients (list): _description_
-            enable (bool, optional): _description_. Defaults to True.
+            host (str): SMTP Server to use for sending email notifications
+            security (str or None): Security to use for sending emails. Can be None, starttls, or ssltls
+            port (int): Port for the SMTP (or host) server to use
+            username (str): The username to login into SMTP server. This is not always required. Defaults to None
+            password (str): The password to login into SMTP server. This is not always required. Defaults to None
+            sender (str): The sender email address
+            recipients (list): A list of recipients to send the notifications to
+            enable (bool, optional): Enable and Disable email notifications. Defaults to True.
         """
         
         self.params = {
@@ -33,14 +33,17 @@ class EmailSettings(BaseTemplate):
             'host': host,
             'security': security,
             'port': port,
-            'authentication': {
-                'user': username,
-                'password': password
-            },
+            'authentication': None,
             'sender': sender,
             'recipient': recipients,
             'func': 'config.notify'
         }
+
+        if username:
+            self.params['authentication'] = {
+                'user': username,
+                'password': password
+            }
 
 class TimeSettings(BaseTemplate):
 
@@ -59,102 +62,71 @@ class TimeSettings(BaseTemplate):
 
 class AdminSettings(BaseTemplate):
 
-    def __init__(self, name, is_enforce=None, adminLoginName=None,
-                    adminLoginPassword=None, userLoginName=None, userLoginPassword=None,
-                    frontPanel_password=None, fp_pw_1=0, fp_pw_2=0, fp_pw_3=0, fp_pw_4=0, timeout=3600,
-                    timeout_hh=1, timeout_mm=0, auth_method=None, tacacsplus_host=None, tacacsplus_secret=None, tacacsplus_timeout=3,
-                    auth_protocol="MS-CHAP+v2", auth_timeout=None, coa_port=None, acct_interval=None, cli_access=None, cli_access_lanonly="yes",
-                    cli_port=None, cli_loginGraceTime=None, accessProtocol_method="https", accessProtocol_redirect=None,
-                    accessProtocol_http_port=None, accessProtocol_http_access=None, accessProtocol_https_port=443, accessProtocol_https_access="lan",
-                    access_protocol="https", http_admin_access_lanonly="yes", https_admin_access_lanonly0="yes",
-                    https_admin_access_lanonly="yes", http_port=None, https_port=443, lanAccess_custom="no", lanAccess_id=0,
-                    wan_access_custom="no", wanAccess_sourceSubnets=None, soruce_subnets=None, conn_1="default", conn_2="default",
-                    conn_3="default", conn_4="default"):
-        """_summary_
+    def __init__(self, name, admin_name=None, admin_password=None, user_name=None, user_password=None, web_session_timeout=14400, access_protocol_method='http+https',
+                    http_redirect_to_https='yes', http_port=80, http_access='lan', https_port=443, https_access='lan'):
+        """ Admin Settings data holder for Peplink API
 
         Args:
-            name (_type_): _description_
-            is_enforce (_type_, optional): _description_. Defaults to None.
-            adminLoginName (_type_, optional): _description_. Defaults to None.
-            adminLoginPassword (_type_, optional): _description_. Defaults to None.
-            userLoginName (_type_, optional): _description_. Defaults to None.
-            userLoginPassword (_type_, optional): _description_. Defaults to None.
-            frontPanel_password (_type_, optional): _description_. Defaults to None.
-            fp_pw_1 (int, optional): _description_. Defaults to 0.
-            fp_pw_2 (int, optional): _description_. Defaults to 0.
-            fp_pw_3 (int, optional): _description_. Defaults to 0.
-            fp_pw_4 (int, optional): _description_. Defaults to 0.
-            timeout (int, optional): _description_. Defaults to 3600.
-            timeout_hh (int, optional): _description_. Defaults to 1.
-            timeout_mm (int, optional): _description_. Defaults to 0.
-            auth_method (_type_, optional): _description_. Defaults to None.
-            tacacsplus_host (_type_, optional): _description_. Defaults to None.
-            tacacsplus_secret (_type_, optional): _description_. Defaults to None.
-            tacacsplus_timeout (int, optional): _description_. Defaults to 3.
-            auth_protocol (str, optional): _description_. Defaults to "MS-CHAP+v2".
-            auth_timeout (_type_, optional): _description_. Defaults to None.
-            coa_port (_type_, optional): _description_. Defaults to None.
-            acct_interval (_type_, optional): _description_. Defaults to None.
-            cli_access (_type_, optional): _description_. Defaults to None.
-            cli_access_lanonly (str, optional): _description_. Defaults to "yes".
-            cli_port (_type_, optional): _description_. Defaults to None.
-            cli_loginGraceTime (_type_, optional): _description_. Defaults to None.
-            accessProtocol_method (str, optional): _description_. Defaults to "https".
-            accessProtocol_redirect (_type_, optional): _description_. Defaults to None.
-            accessProtocol_http_port (_type_, optional): _description_. Defaults to None.
-            accessProtocol_http_access (_type_, optional): _description_. Defaults to None.
-            accessProtocol_https_port (int, optional): _description_. Defaults to 443.
-            accessProtocol_https_access (str, optional): _description_. Defaults to "lan".
-            access_protocol (str, optional): _description_. Defaults to "https".
-            http_admin_access_lanonly (str, optional): _description_. Defaults to "yes".
-            https_admin_access_lanonly0 (str, optional): _description_. Defaults to "yes".
-            https_admin_access_lanonly (str, optional): _description_. Defaults to "yes".
-            http_port (_type_, optional): _description_. Defaults to None.
-            https_port (int, optional): _description_. Defaults to 443.
-            lanAccess_custom (str, optional): _description_. Defaults to "no".
-            lanAccess_id (int, optional): _description_. Defaults to 0.
-            wan_access_custom (str, optional): _description_. Defaults to "no".
-            wanAccess_sourceSubnets (_type_, optional): _description_. Defaults to None.
-            soruce_subnets (_type_, optional): _description_. Defaults to None.
-            conn_1 (str, optional): _description_. Defaults to "default".
-            conn_2 (str, optional): _description_. Defaults to "default".
-            conn_3 (str, optional): _description_. Defaults to "default".
-            conn_4 (str, optional): _description_. Defaults to "default".
+            name (str): Name of Peplink device
+            admin_name (str, optional): Admin login username. Defaults to None.
+            admin_password (str, optional): Admin login password. Defaults to None.
+            user_name (str, optional): User login username. Defaults to None.
+            user_password (str, optional): User login password. Defaults to None.
+            web_session_timeout (int, optional): Web session timeout in seconds. Defaults to 14400.
+            access_protocol_method (str, optional): Protocol used to access device. Can be http, https, or http+https. Defaults to 'http+https'.
+            http_redirect_to_https (str, optional): If http redirects to https. Can be yes or no. Defaults to 'yes'.
+            http_port (int, optional): HTTP port used by device. Only takes effect if access_protocol_method=http. Defaults to 80.
+            http_access (str, optional): Where the Web Interface can be accessed from using HTTP. Can be lan or lan+wan. Defaults to 'lan'.
+            https_port (int, optional): HTTPS port used by device. Only takes effect if access_protocol_method=https. Defaults to 443.
+            https_access (str, optional): Where the Web Interface can be accessed from using HTTPS. Can be lan or lan+wan. Defaults to 'lan'.
         """
-        
-        self.params = locals()
-        self.params['device_name'] = name
-        self.params['legacy'] = '' # This needs to be here to make the request work
-        self.params['func'] = 'config.admin'
-        del self.params['self']
-        self.__check_parameters()
 
-    def __check_parameters(self):
-        if self.params['adminLoginPassword']:
-            self.params['adminLoginPasswordConfirm'] = self.params['adminLoginPassword']
-        
-        if self.params['userLoginPassword']:
-            self.params['userLoginPasswordConfirm'] = self.params['userLoginPassword']
+        self.arguments = locals()
+        self.__set_parameters()
+
+    def __set_parameters(self):
+        self.params = {
+            'device_name': self.arguments['name'],
+            'name': self.arguments['name'],
+            'legacy': '', # This needs to be here to make the request work
+            'func': 'config.admin',
+            'adminLoginName': self.arguments['admin_name'],
+            'adminLoginPassword': self.arguments['admin_password'],
+            'adminLoginPasswordConfirm': self.arguments['admin_password'],
+            'userLoginName': self.arguments['user_name'],
+            'userLoginPassword': self.arguments['user_password'],
+            'userLoginPasswordConfirm': self.arguments['user_password'],
+            'timeout': self.arguments['web_session_timeout'],
+            'accessProtocol_method': self.arguments['access_protocol_method'],
+            'accessProtocol_redirect': self.arguments['http_redirect_to_https'],
+            'accessProtocol_http_port': self.arguments['http_port'],
+            'accessProtocol_http_access': self.arguments['http_access'],
+            'accessProtocol_https_port': self.arguments['https_port'],
+            'accessProtocol_https_access': self.arguments['https_access']
+        }
 
 class PortForwarding(BaseTemplate):
 
-    def __init__(self, name, server_ip_address, id=0, enable=True, protocol=("TCP", 554, None), allow_pepvpn=False,
-                    wan_connection={"2":{"ip":["default"]},"order":[2]}):
-        """_summary_
+    def __init__(self, name, server_ip_address, id=0, enable=True, protocol='TCP', external_port=None, mapped_port=None, allow_pepvpn=False,
+                    enable_wan=False, enable_cell=False, enable_wifi_2=False, enable_wifi_5=False):
+        """ Port Forwarding data holder for Peplink API
 
         Args:
-            name (_type_): _description_
-            server_ip_address (_type_): _description_
-            id (int, optional): _description_. Defaults to 0.
-            enable (bool, optional): _description_. Defaults to True.
-            protocol (tuple, optional): _description_. Defaults to ("TCP", 554, None).
-            allow_pepvpn (bool, optional): _description_. Defaults to False.
-            wan_connection (dict, optional): _description_. Defaults to {"2":{"ip":["default"]},"order":[2]}.
+            name (str): Name of port forwarding rule
+            server_ip_address (str): Internal IP Address to forward the traffic to
+            id (int, optional): Port forwarding id. Leave this at 0 for creating new port forwarding rules. Defaults to 0.
+            enable (bool, optional): If the port forwarding rule is enabled or disabled. Defaults to True.
+            protocol (str, optional): The protocol to use. Can be TCP, UDP, ICMP, or IP. Defaults to 'TCP'.
+            external_port (int, optional): The external port to forward the taffic to. Defaults to None.
+            mapped_port (int, optional): The mapped port to the internal IP Address. Defaults to None.
+            allow_pepvpn (bool, optional): Enable or disable_pepvpn. Defaults to False.
+            enable_wan (bool, optional): Enable the wan connection to pass this port forwarding rule. Defaults to False.
+            enable_cell (bool, optional): Enable the cellular connection to pass this port forwarding rule. Defaults to False.
+            enable_wifi_2 (bool, optional): Enable the 2.4 GHz Wi-Fi to pass this port forwarding rule. Defaults to False.
+            enable_wifi_5 (bool, optional): Enable the 5 GHz Wi-Fi to pass this port forwarding rule. Defaults to False.
         """
-        
-        func_args = locals()
-        self.__check_parameters(func_args)
 
+        arguments = locals()
         self.params = {
             'func': 'config.inbound.service',
             'action': 'add',
@@ -164,12 +136,11 @@ class PortForwarding(BaseTemplate):
                     'enable': enable,
                     'name': name,
                     'protocol': {
-                        'type': protocol[0],
-                        'port': protocol[1],
-                        'portMapper': protocol[2]
+                        'type': protocol,
+                        'port': external_port,
+                        'portMapper': mapped_port
                     },
                     'allowPepvpnConnection': allow_pepvpn,
-                    'wanConnection': wan_connection,
                     'inboundServer': {
                         'action': 'add',
                         'ip': server_ip_address,
@@ -178,140 +149,103 @@ class PortForwarding(BaseTemplate):
                 }
             ]
         }
+        self.__check_parameters(arguments)
 
     def __check_parameters(self, parameters):
-        if len(parameters['protocol']) != 3:
-            raise SyntaxError('Please Provide 3 items for protocol (Protocol, Port, Mapped Port). If mapped port isn\'t applicable then provide None')
+        wan_connection = dict()
+        order = list()
+        if parameters['enable_wan']:
+            wan_connection['1'] = {'ip': ['default']}
+            order.append(1)
+        if parameters['enable_cell']:
+            wan_connection['2'] = {'ip': ['default']}
+            order.append(2)
+        if parameters['enable_wifi_2']:
+            wan_connection['3'] = {'ip': ['default']}
+            order.append(3)
+        if parameters['enable_wifi_5']:
+            wan_connection['4'] = {'ip': ['default']}
+            order.append(4)
+        
+        if len(order) == 0:
+            raise SyntaxError("Please enable one of these WAN connections (enable_wan, enable_cell, enable_wifi_2_4, enable_wifi_5).")
+
+        wan_connection['order'] = order
+        self.params['wanConnection'] = wan_connection
 
 class GenericLan(BaseTemplate):
 
-    def __init__(self, lan_mac_custom='on', _ip=None, _mask=24,
-                    _gateway=None, lan_static_route_count=0, lan_static_route_order=None,
-                    _ntw_type=None, _virtual=None, vnat_o2o_count=0, vnat_m2o_count=0,
-                    wins_enable=None, ldns_enable='yes', ldns_use_google='yes', _host=None,
-                    _ttl=None, lan_ldns_route_count=0, lan_ldns_route_order=None,
-                    _domain=None, _conn=None, ldns_custom_resolver=None, ldns_lan_0_server=None):
-        """_summary_
+    def __init__(self, proxy_dns_enable='yes', proxy_dns_caching='no', proxy_google_dns='yes'):
+        """ Generic Lan data holder for Peplink API
 
         Args:
-            lan_mac_custom (str, optional): _description_. Defaults to 'on'.
-            _ip (_type_, optional): _description_. Defaults to None.
-            _mask (int, optional): _description_. Defaults to 24.
-            _gateway (_type_, optional): _description_. Defaults to None.
-            lan_static_route_count (int, optional): _description_. Defaults to 0.
-            lan_static_route_order (_type_, optional): _description_. Defaults to None.
-            _ntw_type (_type_, optional): _description_. Defaults to None.
-            _virtual (_type_, optional): _description_. Defaults to None.
-            vnat_o2o_count (int, optional): _description_. Defaults to 0.
-            vnat_m2o_count (int, optional): _description_. Defaults to 0.
-            wins_enable (_type_, optional): _description_. Defaults to None.
-            ldns_enable (str, optional): _description_. Defaults to 'yes'.
-            ldns_use_google (str, optional): _description_. Defaults to 'yes'.
-            _host (_type_, optional): _description_. Defaults to None.
-            _ttl (_type_, optional): _description_. Defaults to None.
-            lan_ldns_route_count (int, optional): _description_. Defaults to 0.
-            lan_ldns_route_order (_type_, optional): _description_. Defaults to None.
-            _domain (_type_, optional): _description_. Defaults to None.
-            _conn (_type_, optional): _description_. Defaults to None.
-            ldns_custom_resolver (_type_, optional): _description_. Defaults to None.
-            ldns_lan_0_server (_type_, optional): _description_. Defaults to None.
+            proxy_dns_enable (str, optional): Enable proxy DNS. Can be yes or no. Defaults to 'yes'
+            proxy_dns_caching (str, optional): Enable DNS caching. Can be yes or no. Defaults to 'no
+            proxy_google_dns (str, optional): Enable the use of Google's public DNS servers for proxy DNS. Can be yes or no. Defaults to 'no'
         """
                     
-        self.params = locals()
-        self.params['section'] = 'LAN_generic_modify'
-        del self.params['self']
+        self.pararms = {
+            'section': 'LAN_generic_modify',
+            'ldns_enable': proxy_dns_enable,
+            'ldns_cache': proxy_dns_caching,
+            'ldns_use_google': proxy_google_dns
+        }
 
 class LanProfile(BaseTemplate):
 
-    def __init__(self, lan_id, lan_dhcp_mode="server", lan_ip='192.168.50.1', lan_mask=24, wan_dropin_self_ip='169.254.0.1',
-                    wan_dropin_self_mask=24, lan_name='Default', lan_vlan=None, lan_routing='yes', can_dropin='yes', prev_dropin_conn_id=None, wan_dropin_conn_id=1,
-                    wan_dropin_nat_on_vlan='yes', wan_dropin_lan_ip=None, wan_dropin_lan_mask=24, wan_dropin_route=None, wan_dropin_gateway=None,
-                    wan_dropin_dns_custom_server1=None, wan_dropin_dns_custom_server2=None, l2_profile=None, l2_pvid=None, l2_override=None, l2_lan_ip=None,
-                    l2_lan_mask=24, lan_dhcp_mode_ui='server', lan_dhcp_pool_start='192.168.50.10', lan_dhcp_pool_end='192.168.50.250',
-                    lan_dhcp_pool_mask=24, lan_dhcp_lease=28800, lan_dhcp_lease_day_ui=0, lan_dhcp_lease_hour_ui=8, lan_dhcp_lease_minute_ui=0,
-                    lan_dhcp_dns_custom_server=None, lan_dhcp_dns_auto='yes', dns_custom_server1=None, dns_custom_server2=None, lan_dhcp_wins_servers=None,
-                    lan_dhcp_wins_custom_builtin='no', wins_custom_server1=None, wins_custom_server2=None, dhcp_bootp_server=None, dhcp_bootp_file=None, dhcp_bootp_sn=None,
-                    dhcp_reservation_count=0, dhcp_reservation_order=None, lan_dhcp_relay_server=None, dhcp_relay_server1=None, dhcp_relay_server2=None,
-                    section='LAN_network_modify'):
-        """_summary_
+    def __init__(self, name, id=0, enable_dhcp=True, router_ip='192.168.50.1', router_subnet_mask=24, dhcp_pool_start='192.168.50.10', dhcp_pool_end='192.168.50.250',
+                    dhcp_pool_subnet_mask='24', dhcp_lease_time=86400):
+        """ Lan Profile data holder for Peplink API
 
         Args:
-            lan_id (_type_): _description_
-            lan_dhcp_mode (str, optional): _description_. Defaults to "server".
-            lan_ip (str, optional): _description_. Defaults to '192.168.50.1'.
-            lan_mask (int, optional): _description_. Defaults to 24.
-            wan_dropin_self_ip (str, optional): _description_. Defaults to '169.254.0.1'.
-            wan_dropin_self_mask (int, optional): _description_. Defaults to 24.
-            lan_name (str, optional): _description_. Defaults to 'Default'.
-            lan_vlan (_type_, optional): _description_. Defaults to None.
-            lan_routing (str, optional): _description_. Defaults to 'yes'.
-            can_dropin (str, optional): _description_. Defaults to 'yes'.
-            prev_dropin_conn_id (_type_, optional): _description_. Defaults to None.
-            wan_dropin_conn_id (int, optional): _description_. Defaults to 1.
-            wan_dropin_nat_on_vlan (str, optional): _description_. Defaults to 'yes'.
-            wan_dropin_lan_ip (_type_, optional): _description_. Defaults to None.
-            wan_dropin_lan_mask (int, optional): _description_. Defaults to 24.
-            wan_dropin_route (_type_, optional): _description_. Defaults to None.
-            wan_dropin_gateway (_type_, optional): _description_. Defaults to None.
-            wan_dropin_dns_custom_server1 (_type_, optional): _description_. Defaults to None.
-            wan_dropin_dns_custom_server2 (_type_, optional): _description_. Defaults to None.
-            l2_profile (_type_, optional): _description_. Defaults to None.
-            l2_pvid (_type_, optional): _description_. Defaults to None.
-            l2_override (_type_, optional): _description_. Defaults to None.
-            l2_lan_ip (_type_, optional): _description_. Defaults to None.
-            l2_lan_mask (int, optional): _description_. Defaults to 24.
-            lan_dhcp_mode_ui (str, optional): _description_. Defaults to 'server'.
-            lan_dhcp_pool_start (str, optional): _description_. Defaults to '192.168.50.10'.
-            lan_dhcp_pool_end (str, optional): _description_. Defaults to '192.168.50.250'.
-            lan_dhcp_pool_mask (int, optional): _description_. Defaults to 24.
-            lan_dhcp_lease (int, optional): _description_. Defaults to 28800.
-            lan_dhcp_lease_day_ui (int, optional): _description_. Defaults to 0.
-            lan_dhcp_lease_hour_ui (int, optional): _description_. Defaults to 8.
-            lan_dhcp_lease_minute_ui (int, optional): _description_. Defaults to 0.
-            lan_dhcp_dns_custom_server (_type_, optional): _description_. Defaults to None.
-            lan_dhcp_dns_auto (str, optional): _description_. Defaults to 'yes'.
-            dns_custom_server1 (_type_, optional): _description_. Defaults to None.
-            dns_custom_server2 (_type_, optional): _description_. Defaults to None.
-            lan_dhcp_wins_servers (_type_, optional): _description_. Defaults to None.
-            lan_dhcp_wins_custom_builtin (str, optional): _description_. Defaults to 'no'.
-            wins_custom_server1 (_type_, optional): _description_. Defaults to None.
-            wins_custom_server2 (_type_, optional): _description_. Defaults to None.
-            dhcp_bootp_server (_type_, optional): _description_. Defaults to None.
-            dhcp_bootp_file (_type_, optional): _description_. Defaults to None.
-            dhcp_bootp_sn (_type_, optional): _description_. Defaults to None.
-            dhcp_reservation_count (int, optional): _description_. Defaults to 0.
-            dhcp_reservation_order (_type_, optional): _description_. Defaults to None.
-            lan_dhcp_relay_server (_type_, optional): _description_. Defaults to None.
-            dhcp_relay_server1 (_type_, optional): _description_. Defaults to None.
-            dhcp_relay_server2 (_type_, optional): _description_. Defaults to None.
-            section (str, optional): _description_. Defaults to 'LAN_network_modify'.
+            name (str): Name of lan profile
+            id (int, optional): Id of lan profile. This is only applicable if you have more than 1 lan profile. Defaults to 0.
+            enable_dhcp (bool, optional): Enable dhcp mode. Defaults to True.
+            router_ip (str, optional): Router IP Address. Defaults to '192.168.50.1'.
+            router_subnet_mask (int, optional): Router subnet mask. Defaults to 24.
+            dhcp_pool_start (str, optional): Dhcp pool starting IP Address. This is only applicable if dhcp is enabled. Defaults to '192.168.50.10'.
+            dhcp_pool_end (str, optional): Dhcp pool ending IP Address. Defaults to '192.168.50.250'.
+            dhcp_pool_subnet_mask (str, optional): Dhcp pool subnet mask. This is only applicable if dhcp is enabled. Defaults to '24'.
+            dhcp_lease_time (int, optional): Dhcp lease time for IP Addresses. This is only applicable if dhcp is enabled. Defaults to 86400.
         """
 
-        self.params = locals()
-        del self.params['self']
+        self.params = {
+            'lan_id': id,
+            'section': 'LAN_network_modify',
+            'lan_ip': router_ip,
+            'lan_mask': router_subnet_mask,
+            'lan_name': name,
+            'lan_dhcp_pool_start': dhcp_pool_start,
+            'lan_dhcp_pool_end': dhcp_pool_end,
+            'lan_dhcp_pool_mask': dhcp_pool_subnet_mask,
+            'lan_dhcp_lease': dhcp_lease_time
+        }
+
+        if enable_dhcp:
+            self.params['lan_dhcp_mode'] = 'server'
+        else:
+            self.params['lan_dhcp_mode'] = 'disable'
 
 class CellularSettings(BaseTemplate):
 
-    def __init__(self, instant_active=True, apn=None, id=2, name='Cellular', enable=True,
-                    healthcheck={'enable': True, 'method': {'type': 'smartcheck', 'detail': {'host': []}}, 'timeout': 5000, 'interval': 10, 'retry': 3, 'recovery': 3},
-                    ddns={'enable': False}, schedule=None, cellular={'preferredSim': None, 'simCardScheme': '1'}, sim1_info=None, sim2_info=None, signal_level=0, priority=1, mtu=1342):
-        """_summary_
+    def __init__(self, instant_active=True, id=2, name='Cellular', enable=True, enable_healthcheck=True, enable_ddns=False,
+                    schedule=None, cellular={'preferredSim': None, 'simCardScheme': '1'}, sim1_info=None, sim2_info=None, signal_level=0, priority=1, mtu=1342):
+        """ Cellular Settings data holder for Peplink API
 
         Args:
             instant_active (bool, optional): _description_. Defaults to True.
-            apn (_type_, optional): _description_. Defaults to None.
-            id (int, optional): _description_. Defaults to 2.
-            name (str, optional): _description_. Defaults to 'Cellular'.
-            enable (bool, optional): _description_. Defaults to True.
-            healthcheck (dict, optional): _description_. Defaults to {'enable': True, 'method': {'type': 'smartcheck', 'detail': {'host': []}}, 'timeout': 5000, 'interval': 10, 'retry': 3, 'recovery': 3}.
-            ddns (dict, optional): _description_. Defaults to {'enable': False}.
+            id (int, optional): The id of the wan connection. Cellular setting is always 2. Defaults to 2.
+            name (str, optional): Name of Cellular setting. Defaults to 'Cellular'.
+            enable (bool, optional): Enable Cell Settings. Defaults to True.
+            enable_healthcheck (bool, optional): Enable healthcheck. Defaults to True.
+            enable_ddns (bool, optional): Enable ddns. Defaults to False.
             schedule (_type_, optional): _description_. Defaults to None.
             cellular (dict, optional): _description_. Defaults to {'preferredSim': None, 'simCardScheme': '1'}.
-            sim1_info (_type_, optional): _description_. Defaults to None.
-            sim2_info (_type_, optional): _description_. Defaults to None.
-            signal_level (int, optional): _description_. Defaults to 0.
-            priority (int, optional): _description_. Defaults to 1.
-            mtu (int, optional): _description_. Defaults to 1342.
+            sim1_info (dict, optional): Collection of Sim information. Defaults to None.
+            sim2_info (dict, optional): Collection of Sim information. Defaults to None.
+            signal_level (int, optional): Singal level for cellular signal. Defaults to 0.
+            priority (int, optional): The priority compared to other active wan connections. Defaults to 1.
+            mtu (int, optional): The maxium transmit unit. Firstnet is 1342. Defaults to 1342.
         """
 
         # Sim Information has to be filled out for request to be sucessfull
@@ -347,6 +281,7 @@ class CellularSettings(BaseTemplate):
                     'enable': False
                 }
             }
+
         cellular['sim'] = [sim1_info, sim2_info]
         cellular['signalThreshold'] = {'signalLevel': [signal_level]}
         connection = {
@@ -375,6 +310,18 @@ class CellularSettings(BaseTemplate):
                 'networkMode': ""
             }
         }
+        new_ddns = {'enable': enable_ddns}
+        new_healthcheck = {
+            'enable': enable_healthcheck,
+            'method': {
+                'type': 'smartcheck',
+                'detail': {'host': []}
+            },
+            'timeout': 5000,
+            'interval': 10,
+            'retry': 3,
+            'recovery': 3
+        }
 
         self.params = {
             'func': 'config.wan.connection',
@@ -386,8 +333,8 @@ class CellularSettings(BaseTemplate):
                     'id': id,
                     'name': name,
                     'enable': enable,
-                    'healthcheck': healthcheck,
-                    'ddns': ddns,
+                    'healthcheck': new_healthcheck,
+                    'ddns': new_ddns,
                     'schedule': schedule,
                     'cellular': cellular,
                     'connection': connection,

@@ -7,6 +7,17 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class PepPy:
 
     def __init__(self, username, password, ip_address="192.168.50.1", port=443, http_type="https", debug=False):
+        """ Creates a python module that integrates with the Peplink API.
+
+        Args:
+            username (str): Username to log into Peplink router
+            password (str): Password to log into Peplink router
+            ip_address (str, optional): IP Address of Peplink router. Defaults to "192.168.50.1".
+            port (int, optional): Usually the HTTPS or HTTP port to communicate with Peplink. Defaults to 443.
+            http_type (str, optional): The HTTP protocol to use. Can either be HTTPS or HTTP. Defaults to "https".
+            debug (bool, optional): If True, it will display debuging messages. Defaults to False.
+        """
+
         self.username = username
         self.password = password
         self.__ip = ip_address
@@ -24,7 +35,6 @@ class PepPy:
         self.__URL = self.__http_type + "://" + self.__ip + ":" + str(self.__port) + "/cgi-bin/MANGA/"
     
     def __debug(self, message):
-
         if self.__DEBUG:
             print(message)
 
@@ -51,7 +61,7 @@ class PepPy:
 
         self.__debug(f"Sending a request to: {url}")
 
-        # Need to clean some requests or else the peplink API will throw an error
+        # Need to clean the parameters = None or else the peplink API will throw an error
         if clean:
             self.__clean(kwargs)
 
@@ -72,7 +82,7 @@ class PepPy:
     
     def __check_for_new_cookies_in_reponse(self, response):
         try:
-            response.cookies['bauth'] # bauth is what peplink stores the cookie as
+            response.cookies['bauth'] # bauth is where peplink stores the cookie as
             new_cookies = response.cookies
             self.__update_cookies(new_cookies)
         except KeyError:
@@ -83,13 +93,13 @@ class PepPy:
     
 
     def apply_changes(self, wait_time=15):
-        """ Apply changes made to the peplink. This usually takes a couple seconds to take effect.
+        """ Apply changes made to the peplink. This usually takes a couple seconds to take effect
 
         Args:
             wait_time (int, optional): Time to wait after applying changes. Defaults to 15.
 
         Returns:
-            requests.Response: Response from peplink
+            bool: True if the Peplink accepted the API Call
         """
 
         self.__debug("Applying Changes")
@@ -105,7 +115,7 @@ class PepPy:
         """ Log into peplink router
 
         Returns:
-            requests.Response: Response from peplink
+            bool: True if the Peplink accepted the API Call
         """
 
         self.__debug("Logging in")
@@ -125,7 +135,7 @@ class PepPy:
             new_password (str): New password to replace the old password
 
         Returns:
-            requests.Response: Response from peplink API
+            bool: True if the Peplink accepted the API Call
         """
 
         self.__debug("Changing Password")
@@ -141,13 +151,13 @@ class PepPy:
         return result
     
     def edit_lan(self, lan_profile): 
-        """ Edit lan configuration for peplink router
+        """ Edit lan configuration for peplink router under: Network > Network Settings > LAN
 
         Args:
             lan_profile (templates.LanProfile): LanProfile data holder
 
         Returns:
-            requests.Response: Response from peplink API
+            bool: True if the Peplink accepted the API Call
         """
 
         self.__debug("Editting Lan")
@@ -159,13 +169,13 @@ class PepPy:
         return result
     
     def update_generic_lan(self, generic_lan):
-        """ Update Generic Lan information under the Network Settings tab in Network
+        """ Update Generic Lan information under: Network > Network Settings
 
         Args:
             generic_lan (templates.GenericLan): Generic Lan data holder
 
         Returns:
-            requests.Response: Response from peplink API
+            bool: True if the Peplink accepted the API Call
         """
 
         self.__debug("Updating Generic Lan")
@@ -176,13 +186,13 @@ class PepPy:
 
     
     def add_port_forwarding_rule(self, port_forwarding):
-        """ Add port forwarding rule to peplink router
+        """ Add port forwarding rule to peplink router under: Advanced > Port Forwarding
 
         Args:
             port_forwarding (tempaltes.PortForwarding): Port forwarding data holder
 
         Returns:
-            requests.Response: Response from peplink API
+            bool: True if the Peplink accepted the API Call
         """
         
         self.__debug("Adding Port Forwarding Policy")
@@ -191,6 +201,14 @@ class PepPy:
         return self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
     
     def update_admin_settings(self, admin_settings):
+        """ Update the Admin Settings under: System > Admin Security
+
+        Args:
+            admin_settings (templates.AdminSettings): Admin Settings data holder
+
+        Returns:
+            bool: True if the Peplink accepted the API Call
+        """
 
         self.__debug("Updating Admin Settings")
         params = admin_settings.params
@@ -200,6 +218,14 @@ class PepPy:
         return result
     
     def update_time_settings(self, time_settings):
+        """ Update Time Settings under: System > Time
+
+        Args:
+            time_settings (tempaltes.TimeSettings): Time Settings data holder
+
+        Returns:
+            bool: True if the Peplink accepted the API Call
+        """
 
         self.__debug("Updating Time Settings")
         params = time_settings.params
@@ -207,6 +233,14 @@ class PepPy:
         return self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
     
     def change_ap_password(self, new_password):
+        """ Change the main wifi password
+
+        Args:
+            new_password (str): The new password to change the old one to
+
+        Returns:
+            bool: True if the Peplink accepted the API Call
+        """
 
         self.__debug("Changing AP Password")
         params = {
@@ -218,6 +252,14 @@ class PepPy:
     
     
     def update_email_notifications(self, email_settings):
+        """ Update Email Notifications under: System > Email Notification
+
+        Args:
+            email_settings (templates.EmailSettings): Email Settings data holder
+
+        Returns:
+            bool: True if the Peplink accepted the API Call
+        """
 
         self.__debug("Updating Email Settings")
         params = email_settings.params
@@ -225,6 +267,14 @@ class PepPy:
         return self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params, clean=False)
 
     def update_firmware(self, firmware_file_location):
+        """ Update firmware to specificed firmware file
+
+        Args:
+            firmware_file_location (str): File path to firmware file. Must be accessable by the running machine
+
+        Returns:
+            bool: True if the Peplink accepted the API Call
+        """
 
         self.__debug("Updating Firmware")
         params = {'upfile': open(firmware_file_location, 'rb')}
@@ -232,6 +282,14 @@ class PepPy:
         return self.__send_correct_request(self.__FIRMWARE_ENDPOINT, files=params)
     
     def update_cellular(self, cellular_settings):
+        """ Update Cellular Settings under: Dashboard > Wan Connection Status > Cellular
+
+        Args:
+            cellular_settings (templates.CellularSettings): Cellular Settings data holder
+
+        Returns:
+            bool: True if the Peplink accepted the API Call
+        """
 
         self.__debug("Updating Cellular")
         params = cellular_settings.params
