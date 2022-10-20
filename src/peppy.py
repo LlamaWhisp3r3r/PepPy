@@ -221,7 +221,7 @@ class PepPy:
         params = admin_settings.params
 
         result = self.__send_correct_request(self.__OVERALL_ENDPOINT, data=params)
-        self.__port = params['https_port']
+        self.__port = params['accessProtocol_https_port']
         return result
     
     @__check_peplink_response

@@ -184,7 +184,7 @@ class GenericLan(BaseTemplate):
             proxy_google_dns (str, optional): Enable the use of Google's public DNS servers for proxy DNS. Can be yes or no. Defaults to 'no'
         """
                     
-        self.pararms = {
+        self.params = {
             'section': 'LAN_generic_modify',
             'ldns_enable': proxy_dns_enable,
             'ldns_cache': proxy_dns_caching,
