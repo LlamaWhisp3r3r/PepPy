@@ -7,7 +7,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class PepPy:
 
-    def __init__(self, username, password, ip_address="192.168.50.1", port=443, http_type="https", debug=False):
+    def __init__(self, username, password, ip_address="192.168.50.1", port=443, http_type="https", debug=False, timeout=0.5):
         """ Creates a python module that integrates with the Peplink API.
 
         Args:
@@ -22,6 +22,7 @@ class PepPy:
         self.username = username
         self.password = password
         self.__ip = ip_address
+        self.__timeout = timeout
         self.__port = port
         self.__http_type = http_type
         self.__DEBUG = debug
@@ -71,11 +72,13 @@ class PepPy:
         # Need to clean the parameters = None or else the peplink API will throw an error
         if clean:
             self.__clean(kwargs)
-
-        if get:
-            response = requests.get(url, verify=False, cookies=self.cookies, **kwargs)
-        else:
-            response = requests.post(url, verify=False, cookies=self.cookies, **kwargs)
+        try:
+            if get:
+                response = requests.get(url, verify=False, cookies=self.cookies, timeout=self.__timeout, **kwargs)
+            else:
+                response = requests.post(url, verify=False, cookies=self.cookies, timeout=self.__timeout, **kwargs)
+        except requests.exceptions.ConnectTimeout:
+            pass
 
         self.__check_for_new_cookies_in_reponse(response)
         return response
