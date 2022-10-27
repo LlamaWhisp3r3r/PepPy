@@ -21,7 +21,7 @@ class PepPy:
 
         self.username = username
         self.password = password
-        self.ip = ip_address
+        self.__ip = ip_address
         self.__port = port
         self.__http_type = http_type
         self.__DEBUG = debug
@@ -32,8 +32,13 @@ class PepPy:
         self.cookies  = None
         self.__update_url()
     
+    @ip.setter
+    def ip(self, new_ip):
+        self.__ip = new_ip
+        self.__update_url()
+    
     def __update_url(self):
-        self.__URL = self.__http_type + "://" + self.ip + ":" + str(self.__port) + "/cgi-bin/MANGA/"
+        self.__URL = self.__http_type + "://" + self.__ip + ":" + str(self.__port) + "/cgi-bin/MANGA/"
     
     def __debug(self, message):
         if self.__DEBUG:
