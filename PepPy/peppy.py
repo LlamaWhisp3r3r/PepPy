@@ -101,6 +101,8 @@ class PepPy:
             self.__update_cookies(new_cookies)
         except KeyError:
             pass 
+        except AttributeError:
+            pass
     
     def __update_cookies(self, new_cookies):
         self.cookies  = new_cookies
