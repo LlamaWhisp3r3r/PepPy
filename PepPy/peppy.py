@@ -57,11 +57,14 @@ class PepPy:
         return magic
     
     def __check_if_good_response(self, response):
-        if 'ok' in response.text or 'Success' in response.text:
-            return True
-        elif '1' in response.text.split('\n'):
-            return True
-        else:
+        try:
+            if 'ok' in response.text or 'Success' in response.text:
+                return True
+            elif '1' in response.text.split('\n'):
+                return True
+            else:
+                return False
+        except AttributeError:
             return False
 
     def __send_correct_request(self, endpoint, clean=True, get=False, **kwargs):
