@@ -15,10 +15,8 @@ setup(
     long_description=read('README.md'),
     install_requires=[
         "requests",
-        "unittest",
         "httpretty",
         'urllib3',
-        "time"
     ],
     classifiers=[
         "Intended Audience :: Developers",
