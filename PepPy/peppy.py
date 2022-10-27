@@ -32,6 +32,10 @@ class PepPy:
         self.cookies  = None
         self.__update_url()
     
+    @property
+    def ip(self):
+        return self.__ip
+    
     @ip.setter
     def ip(self, new_ip):
         self.__ip = new_ip
