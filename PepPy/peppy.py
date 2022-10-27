@@ -78,7 +78,7 @@ class PepPy:
             else:
                 response = requests.post(url, verify=False, cookies=self.cookies, timeout=self.__timeout, **kwargs)
         except requests.exceptions.ConnectTimeout:
-            pass
+            response = dict()
 
         self.__check_for_new_cookies_in_reponse(response)
         return response
