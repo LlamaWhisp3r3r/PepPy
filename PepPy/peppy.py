@@ -69,7 +69,6 @@ class PepPy:
 
     def __send_correct_request(self, endpoint, clean=True, get=False, **kwargs):
         url = self.__URL + endpoint
-
         self.__debug(f"Sending a request to: {url}")
 
         # Need to clean the parameters = None or else the peplink API will throw an error

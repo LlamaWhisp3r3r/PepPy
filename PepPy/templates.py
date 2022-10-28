@@ -171,7 +171,7 @@ class PortForwarding(BaseTemplate):
             raise SyntaxError("Please enable one of these WAN connections (enable_wan, enable_cell, enable_wifi_2_4, enable_wifi_5).")
 
         wan_connection['order'] = order
-        self.params['wanConnection'] = wan_connection
+        self.params['list'][0]['wanConnection'] = wan_connection
 
 class GenericLan(BaseTemplate):
 
