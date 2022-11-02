@@ -126,7 +126,6 @@ class PepPy:
 
         result = self.__send_correct_request(self.__OVERALL_ENDPOINT, data=params)
         time.sleep(wait_time) # Need to wait some time for the settings to take effect
-        self.__update_url()
         return result
 
     @__check_peplink_response
