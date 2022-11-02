@@ -49,12 +49,9 @@ class PepPy:
         if self.__DEBUG:
             print(message)
 
-    def __check_peplink_response(func):
-        def magic(self, *args, **kwargs):
-            response = func(self, *args, **kwargs)
-            result = self.__check_if_good_response(response)
-            return result
-        return magic
+    def __check_peplink_response(self, response):
+        result = self.__check_if_good_response(response)
+        return result
     
     def __check_if_good_response(self, response):
         try:
@@ -108,7 +105,7 @@ class PepPy:
     def __update_cookies(self, new_cookies):
         self.cookies  = new_cookies
     
-    @__check_peplink_response
+    
     def apply_changes(self, wait_time=15):
         """ Apply changes made to the peplink. This usually takes a couple seconds to take effect
 
@@ -125,9 +122,9 @@ class PepPy:
 
         result = self.__send_correct_request(self.__OVERALL_ENDPOINT, data=params)
         time.sleep(wait_time) # Need to wait some time for the settings to take effect
-        return result
+        return self.__check_peplink_response(result)
 
-    @__check_peplink_response
+    
     def login(self):
         """ Log into peplink router
 
@@ -142,10 +139,10 @@ class PepPy:
             'password': self.password,
             'func': 'login'
         }
+        
+        result = self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
+        return self.__check_peplink_response(result)
 
-        return self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
-
-    @__check_peplink_response
     def change_password(self, new_password):
         """ Change password for current logged on user
 
@@ -166,9 +163,8 @@ class PepPy:
 
         result = self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
         self.password = new_password
-        return result
+        return self.__check_peplink_response(result)
     
-    @__check_peplink_response
     def edit_lan(self, lan_profile): 
         """ Edit lan configuration for peplink router under: Network > Network Settings > LAN
 
@@ -185,7 +181,7 @@ class PepPy:
 
         result = self.__send_correct_request(self.__ADMIN_ENDPOINT, data=params)
         self.ip = params['lan_ip']
-        return result
+        return self.__check_peplink_response(result)
     
     @__check_peplink_response
     def update_generic_lan(self, generic_lan):
@@ -202,9 +198,9 @@ class PepPy:
 
         params = generic_lan.params
 
-        return self.__send_correct_request(self.__ADMIN_ENDPOINT, data=params)
+        result = self.__send_correct_request(self.__ADMIN_ENDPOINT, data=params)
+        return self.__check_peplink_response(result)
 
-    @__check_peplink_response
     def add_port_forwarding_rule(self, port_forwarding):
         """ Add port forwarding rule to peplink router under: Advanced > Port Forwarding
 
@@ -218,9 +214,9 @@ class PepPy:
         self.__debug("Adding Port Forwarding Policy")
         params = port_forwarding.params
         
-        return self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
+        result =  self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
+        return self.__check_peplink_response(result)
     
-    @__check_peplink_response
     def update_admin_settings(self, admin_settings):
         """ Update the Admin Settings under: System > Admin Security
 
@@ -236,9 +232,8 @@ class PepPy:
 
         result = self.__send_correct_request(self.__OVERALL_ENDPOINT, data=params)
         self.__port = params['accessProtocol_https_port']
-        return result
+        return self.__check_peplink_response(result)
     
-    @__check_peplink_response
     def update_time_settings(self, time_settings):
         """ Update Time Settings under: System > Time
 
@@ -252,9 +247,9 @@ class PepPy:
         self.__debug("Updating Time Settings")
         params = time_settings.params
 
-        return self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
+        result = self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
+        return self.__check_peplink_response(result)
     
-    @__check_peplink_response
     def change_ap_password(self, new_password):
         """ Change the main wifi password
 
@@ -271,9 +266,9 @@ class PepPy:
             'func': 'cmd.ap.password'
         }
 
-        return self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
+        result = self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params)
+        return self.__check_peplink_response(result)
     
-    @__check_peplink_response
     def update_email_notifications(self, email_settings):
         """ Update Email Notifications under: System > Email Notification
 
@@ -287,9 +282,9 @@ class PepPy:
         self.__debug("Updating Email Settings")
         params = email_settings.params
 
-        return self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params, clean=False)
+        result = self.__send_correct_request(self.__OVERALL_ENDPOINT, json=params, clean=False)
+        return self.__check_peplink_response(result)
 
-    @__check_peplink_response
     def update_firmware(self, firmware_file_location):
         """ Update firmware to specificed firmware file
 
@@ -303,9 +298,9 @@ class PepPy:
         self.__debug("Updating Firmware")
         params = {'upfile': open(firmware_file_location, 'rb')}
 
-        return self.__send_correct_request(self.__FIRMWARE_ENDPOINT, files=params)
+        result = self.__send_correct_request(self.__FIRMWARE_ENDPOINT, files=params)
+        return self.__check_peplink_response(result)
     
-    @__check_peplink_response
     def update_cellular(self, cellular_settings):
         """ Update Cellular Settings under: Dashboard > Wan Connection Status > Cellular
 
@@ -319,7 +314,8 @@ class PepPy:
         self.__debug("Updating Cellular")
         params = cellular_settings.params
 
-        return self.__send_correct_request(self.__OVERALL_ENDPOINT, clean=False, json=params)
+        result = self.__send_correct_request(self.__OVERALL_ENDPOINT, clean=False, json=params)
+        return self.__check_peplink_response(result)
 
     def get_ap_profile(self):
         """ Get Wifi Profile settings
