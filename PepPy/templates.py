@@ -89,6 +89,8 @@ class AdminSettings(BaseTemplate):
             'device_name': self.arguments['name'],
             'name': self.arguments['name'],
             'legacy': '', # This needs to be here to make the request work
+            'is_enforce': '',
+            
             'func': 'config.admin',
             'adminLoginName': self.arguments['admin_name'],
             'adminLoginPassword': self.arguments['admin_password'],
@@ -98,11 +100,11 @@ class AdminSettings(BaseTemplate):
             'userLoginPasswordConfirm': self.arguments['user_password'],
             'timeout': self.arguments['web_session_timeout'],
             'accessProtocol_method': self.arguments['access_protocol_method'],
-            'accessProtocol_redirect': self.arguments['http_redirect_to_https'],
             'accessProtocol_http_port': self.arguments['http_port'],
             'accessProtocol_http_access': self.arguments['http_access'],
             'accessProtocol_https_port': self.arguments['https_port'],
-            'accessProtocol_https_access': self.arguments['https_access']
+            'https_port': self.arguments['https_port'],
+            'accessProtocol_https_access': self.arguments['https_access'],
         }
 
 class PortForwarding(BaseTemplate):

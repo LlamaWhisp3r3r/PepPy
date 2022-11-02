@@ -32,7 +32,7 @@ class PepPy:
         self.__FIRMWARE_ENDPOINT = "firmware.cgi"
         self.cookies  = None
         self.__update_url()
-    
+        
     @property
     def ip(self):
         return self.__ip
@@ -40,9 +40,10 @@ class PepPy:
     @ip.setter
     def ip(self, new_ip):
         self.__ip = new_ip
-        self.__update_url()
+        self.__update_url() 
     
     def __update_url(self):
+        self.__debug('Updating URL')
         self.__URL = self.__http_type + "://" + self.__ip + ":" + str(self.__port) + "/cgi-bin/MANGA/"
     
     def __debug(self, message):
@@ -70,17 +71,14 @@ class PepPy:
     def __send_correct_request(self, endpoint, clean=True, get=False, **kwargs):
         url = self.__URL + endpoint
         self.__debug(f"Sending a request to: {url}")
-
         # Need to clean the parameters = None or else the peplink API will throw an error
         if clean:
             self.__clean(kwargs)
-        try:
+        try:  
             if get:
                 response = requests.get(url, verify=False, cookies=self.cookies, timeout=self.__timeout, **kwargs)
             else:
                 response = requests.post(url, verify=False, cookies=self.cookies, timeout=self.__timeout, **kwargs)
-        except requests.exceptions.ConnectTimeout:
-            response = dict()
         except requests.exceptions.ReadTimeout:
             response = dict()
 
