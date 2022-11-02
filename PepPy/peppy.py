@@ -182,8 +182,7 @@ class PepPy:
         result = self.__send_correct_request(self.__ADMIN_ENDPOINT, data=params)
         self.ip = params['lan_ip']
         return self.__check_peplink_response(result)
-    
-    @__check_peplink_response
+
     def update_generic_lan(self, generic_lan):
         """ Update Generic Lan information under: Network > Network Settings
 
