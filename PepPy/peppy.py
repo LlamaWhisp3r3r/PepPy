@@ -40,7 +40,6 @@ class PepPy:
     @ip.setter
     def ip(self, new_ip):
         self.__ip = new_ip
-        self.__update_url() 
     
     def __update_url(self):
         self.__debug('Updating URL')
