@@ -336,7 +336,13 @@ class PepPy:
 
         params = {'func': 'status.system.info'}
 
-        return self.__send_correct_request(self.__OVERALL_ENDPOINT, params=params, get=True).json()['response']
+        return self._parse_response(self.__send_correct_request(self.__OVERALL_ENDPOINT, params=params, get=True))
+
+    def _parse_response(self, response):
+        try:
+            return response.json()['response']
+        except AttributeError as e:
+            return None
     
     def get_mac_address(self):
 
@@ -367,6 +373,11 @@ class PepPy:
 
         results = self.get_device_info()
         return results['device']['name']
+
+    def get_device_model(self):
+        
+        results = self.get_device_info()
+        return results['device']['productCode']
 
     def get_cpu_load(self):
 
