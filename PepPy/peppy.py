@@ -79,6 +79,8 @@ class PepPy:
             response = dict()
         except requests.exceptions.ConnectTimeout:
             response = dict()
+        except requests.exceptions.ConnectionError:
+            response = dict()
 
         self.__check_for_new_cookies_in_reponse(response)
         return response
