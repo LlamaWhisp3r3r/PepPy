@@ -345,51 +345,101 @@ class PepPy:
             return None
     
     def get_mac_address(self):
+        """ Get device MAC address
+
+        Returns:
+            str: Device MAC address
+        """
 
         results = self.get_device_info()
         return results['macInfo'][0]['mac']
     
     def get_model(self):
+        """ Get device model information
+
+        Returns:
+            str: Device's model information
+        """
 
         results = self.get_device_info()
         return results['device']['model']
     
     def get_serial_number(self):
+        """ Get device serial number
+
+        Returns:
+            str: Device serial number
+        """
 
         results = self.get_device_info()
         return results['device']['serialNumber']
     
     def get_firmware_version(self):
+        """ Get firmware version on the device
+
+        Returns:
+            str: Device firmware version
+        """
 
         results = self.get_device_info()
         return results['device']['firmwareVersion']
     
     def get_uptime(self):
+        """ Get device uptime
+
+        Returns:
+            str: Device uptime
+        """
 
         results = self.get_device_info()
         return results['uptime']['string']
     
     def get_device_name(self):
+        """ Get device name
+
+        Returns:
+            str: Device name
+        """
 
         results = self.get_device_info()
         return results['device']['name']
 
     def get_device_model(self):
+        """ Get device model
+
+        Returns:
+            str: Device model
+        """
         
         results = self.get_device_info()
         return results['device']['productCode']
 
     def get_cpu_load(self):
+        """ Get CPU load of the device
+
+        Returns:
+            str: Device CPU load
+        """
 
         results = self.get_device_info()
         return results['cpuLoad']['string']
     
     def get_wan_connection_info(self):
+        """ Get WAN connection info of the device
+
+        Returns:
+            dict: All of WAN connection information from the device
+        """
 
         params = {'func': 'status.wan.connection'}
         return self.__send_correct_request(self.__OVERALL_ENDPOINT, params=params, get=True).json()['response']
     
     def get_imei(self):
+        """ Get IMEI of device
+
+        Returns:
+            str: Device IMEI
+        """
 
         results = self.get_wan_connection_info()
         return results['2']['cellular']['imei']
