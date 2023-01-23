@@ -7,7 +7,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class PepPy:
 
-    def __init__(self, username, password, ip_address="192.168.50.1", port=443, http_type="https", debug=False, timeout=0.5):
+    def __init__(self, username, password, ip_address="192.168.50.1", port=443, http_type="https", debug=False, timeout=0.5, proxy=None):
         """ Creates a python module that integrates with the Peplink API.
 
         Args:
@@ -17,6 +17,7 @@ class PepPy:
             port (int, optional): Usually the HTTPS or HTTP port to communicate with Peplink. Defaults to 443.
             http_type (str, optional): The HTTP protocol to use. Can either be HTTPS or HTTP. Defaults to "https".
             debug (bool, optional): If True, it will display debuging messages. Defaults to False.
+            proxy (dict, optional): Use local proxy for debugging
         """
 
         self.username = username
@@ -30,6 +31,7 @@ class PepPy:
         self.__OVERALL_ENDPOINT = "api.cgi"
         self.__ADMIN_ENDPOINT = "admin.cgi"
         self.__FIRMWARE_ENDPOINT = "firmware.cgi"
+        self.__PROXY = proxy
         self.cookies  = None
         self.__update_url()
         
@@ -40,6 +42,14 @@ class PepPy:
     @ip.setter
     def ip(self, new_ip):
         self.__ip = new_ip
+        
+    @property
+    def timeout(self):
+        return self.__timeout
+    
+    @timeout.setter
+    def timeout(self, new_timeout):
+        self.__timeout = new_timeout
     
     def __update_url(self):
         self.__debug('Updating URL')
@@ -72,9 +82,9 @@ class PepPy:
             self.__clean(kwargs)
         try:  
             if get:
-                response = requests.get(url, verify=False, cookies=self.cookies, timeout=self.__timeout, **kwargs)
+                response = requests.get(url, verify=False, cookies=self.cookies, timeout=self.__timeout, proxies=self.__PROXY, **kwargs)
             else:
-                response = requests.post(url, verify=False, cookies=self.cookies, timeout=self.__timeout, **kwargs)
+                response = requests.post(url, verify=False, cookies=self.cookies, timeout=self.__timeout, proxies=self.__PROXY, **kwargs)
         except requests.exceptions.ReadTimeout:
             response = dict()
         except requests.exceptions.ConnectTimeout:
