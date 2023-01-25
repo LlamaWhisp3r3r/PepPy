@@ -53,7 +53,7 @@ class PepPy:
     
     def __update_url(self):
         self.__debug('Updating URL')
-        self.__URL = self.__http_type + "://" + self.__ip + ":" + str(self.__port) + "/cgi-bin/MANGA/"
+        self.__URL = f"{self.__http_type}://{self.__ip}:{self.__port}/cgi-bin/MANGA/"
     
     def __debug(self, message):
         if self.__DEBUG:
