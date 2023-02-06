@@ -427,6 +427,16 @@ class PepPy:
         
         results = self.get_device_info()
         return results['device']['productCode']
+    
+    def get_timezone(self):
+        """ Get timezone
+        
+        Returns:
+            str: timezone
+        """
+        
+        results = self.get_device_info()
+        return results['systemTime']['timezone']
 
     def get_cpu_load(self):
         """ Get CPU load of the device
@@ -457,3 +467,26 @@ class PepPy:
 
         results = self.get_wan_connection_info()
         return results['2']['cellular']['imei']
+
+    def get_main_apn(self):
+        """ Get APN for SIM slot 1
+        
+        Returns:
+            str: SIM slot 1 apn
+        """
+        
+        results = self.get_wan_connection_info()
+        return results['2']['cellular']['sim']['1']['apn']
+    
+    def get_secondary_apn(self):
+        """Get APN for SIM slot 2
+        
+        Returns:
+            str: SIM slot 2 apn
+        """
+        
+        results = self.get_wan_connection_info()
+        try:
+            return results['2']['cellular']['sim']['2']['apn']
+        except KeyError:
+            return None
