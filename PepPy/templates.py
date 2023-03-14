@@ -119,7 +119,7 @@ class PortForwarding(BaseTemplate):
             id (int, optional): Port forwarding id. Leave this at 0 for creating new port forwarding rules. Defaults to 0.
             enable (bool, optional): If the port forwarding rule is enabled or disabled. Defaults to True.
             protocol (str, optional): The protocol to use. Can be TCP, UDP, ICMP, or IP. Defaults to 'TCP'.
-            external_port (int, optional): The external port to forward the taffic to. Defaults to None.
+            external_port (int, optional): The external port to forward the traffic to. Defaults to None.
             mapped_port (int, optional): The mapped port to the internal IP Address. Defaults to None.
             allow_pepvpn (bool, optional): Enable or disable_pepvpn. Defaults to False.
             enable_wan (bool, optional): Enable the wan connection to pass this port forwarding rule. Defaults to False.
@@ -196,7 +196,7 @@ class GenericLan(BaseTemplate):
 class LanProfile(BaseTemplate):
 
     def __init__(self, name, id=0, enable_dhcp=True, router_ip='192.168.50.1', router_subnet_mask=24, dhcp_pool_start='192.168.50.10', dhcp_pool_end='192.168.50.250',
-                    dhcp_pool_subnet_mask='24', dhcp_lease_time=86400):
+                 dhcp_pool_subnet_mask='24', dhcp_lease_time=86400, reservation_mac=None, reservation_ip=None, reservation_name=None, reservation_order=1):
         """ Lan Profile data holder for Peplink API
 
         Args:
@@ -220,7 +220,11 @@ class LanProfile(BaseTemplate):
             'lan_dhcp_pool_start': dhcp_pool_start,
             'lan_dhcp_pool_end': dhcp_pool_end,
             'lan_dhcp_pool_mask': dhcp_pool_subnet_mask,
-            'lan_dhcp_lease': dhcp_lease_time
+            'lan_dhcp_lease': dhcp_lease_time,
+            'dhcp_reservation_1_name': reservation_name,
+            'dhcp_reservation_1_mac': reservation_mac,
+            'dhcp_reservation_1_ip': reservation_ip,
+            'dhcp_reservation_order': reservation_order
         }
 
         if enable_dhcp:
