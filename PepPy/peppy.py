@@ -1,3 +1,5 @@
+import urllib
+
 import requests
 import urllib3
 import time
@@ -7,7 +9,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class PepPy:
 
-    def __init__(self, username, password, ip_address="192.168.50.1", port=443, http_type="https", debug=False, timeout=0.5, proxy=None):
+    def __init__(self, username, password, ip_address="192.168.50.1", port=443, http_type="https", debug=False,
+                 timeout=0.5, proxy=None):
         """ Creates a python module that integrates with the Peplink API.
 
         Args:
@@ -16,7 +19,7 @@ class PepPy:
             ip_address (str, optional): IP Address of Peplink router. Defaults to "192.168.50.1".
             port (int, optional): Usually the HTTPS or HTTP port to communicate with Peplink. Defaults to 443.
             http_type (str, optional): The HTTP protocol to use. Can either be HTTPS or HTTP. Defaults to "https".
-            debug (bool, optional): If True, it will display debuging messages. Defaults to False.
+            debug (bool, optional): If True, it will display debugging messages. Defaults to False.
             proxy (dict, optional): Use local proxy for debugging
         """
 
@@ -189,7 +192,7 @@ class PepPy:
             bool: True if the Peplink accepted the API Call
         """
 
-        self.__debug("Editting Lan")
+        self.__debug("Editing Lan")
 
         params = lan_profile.params
 
@@ -218,7 +221,7 @@ class PepPy:
         """ Add port forwarding rule to peplink router under: Advanced > Port Forwarding
 
         Args:
-            port_forwarding (tempaltes.PortForwarding): Port forwarding data holder
+            port_forwarding (templates.PortForwarding): Port forwarding data holder
 
         Returns:
             bool: True if the Peplink accepted the API Call
@@ -241,9 +244,10 @@ class PepPy:
         """
 
         self.__debug("Updating Admin Settings")
+        non_urlencode_params = urllib.parse.urlencode(admin_settings.params, safe='+')
         params = admin_settings.params
 
-        result = self.__send_correct_request(self.__OVERALL_ENDPOINT, data=params)
+        result = self.__send_correct_request(self.__OVERALL_ENDPOINT, data=non_urlencode_params)
         self.__port = params['accessProtocol_https_port']
         return self.__check_peplink_response(result)
     
@@ -251,7 +255,7 @@ class PepPy:
         """ Update Time Settings under: System > Time
 
         Args:
-            time_settings (tempaltes.TimeSettings): Time Settings data holder
+            time_settings (templates.TimeSettings): Time Settings data holder
 
         Returns:
             bool: True if the Peplink accepted the API Call
@@ -264,7 +268,7 @@ class PepPy:
         return self.__check_peplink_response(result)
     
     def change_ap_password(self, new_password):
-        """ Change the main wifi password
+        """ Change the main Wi-Fi password
 
         Args:
             new_password (str): The new password to change the old one to
@@ -299,10 +303,10 @@ class PepPy:
         return self.__check_peplink_response(result)
 
     def update_firmware(self, firmware_file_location):
-        """ Update firmware to specificed firmware file
+        """ Update firmware to specified firmware file
 
         Args:
-            firmware_file_location (str): File path to firmware file. Must be accessable by the running machine
+            firmware_file_location (str): File path to firmware file. Must be accessible by the running machine
 
         Returns:
             bool: True if the Peplink accepted the API Call
@@ -342,7 +346,7 @@ class PepPy:
         return self.__send_correct_request(self.__OVERALL_ENDPOINT, params=params, get=True).json()['response']
     
     def get_device_info(self):
-        """ Get deivce information
+        """ Get device information
 
         Returns:
             dict: All the data that was given from the request
@@ -490,3 +494,29 @@ class PepPy:
             return results['2']['cellular']['sim']['2']['apn']
         except KeyError:
             return None
+    
+    def get_port_forwarding(self):
+        
+        params = {'func': 'config.inbound.service'}
+        results = self.__send_correct_request(self.__OVERALL_ENDPOINT, params=params, get=True).json()['response']
+        response_results = {}
+        
+        for i in results.keys():
+            try:
+                if type(int(i)) == type(1):
+                    print(i)
+                    response_results[i] = results[i]
+            except:
+                pass
+        return response_results
+
+    def change_ap_ssid(self, new_ssid):
+
+        params = {
+            'section': 'EXTAP_network_modify',
+            'ruleid': 1,
+            'ssid': new_ssid,
+            'enable': 'yes'
+        }
+        return self.__send_correct_request(self.__ADMIN_ENDPOINT, data=params)
+        
